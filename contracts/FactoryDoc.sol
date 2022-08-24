@@ -1,4 +1,3 @@
-
 //SPDX-License-Identifier: None
 
 pragma solidity ^0.8.13;
@@ -19,6 +18,31 @@ contract Document {
 
 contract DocumentFactory {
     Document[] public documents;
+
+    struct DocInfo {
+        string types;
+    }
+
+    mapping (address => DocInfo) public docInfo;
+    
+
+    function setType(string memory types ) public {
+        if(keccak256(abi.encodePacked(types)) == keccak256(abi.encodePacked("resolutions"))){
+            docInfo[msg.sender].types = types;
+        }
+        else if(keccak256(abi.encodePacked(types)) == keccak256(abi.encodePacked("contracts"))){
+            docInfo[msg.sender].types = types;
+        }
+        else if(keccak256(abi.encodePacked(types)) == keccak256(abi.encodePacked("certificates"))){
+            docInfo[msg.sender].types = types;
+        }
+        else if(keccak256(abi.encodePacked(types)) == keccak256(abi.encodePacked("affidavits"))){
+            docInfo[msg.sender].types = types;
+        }
+        else {
+            require(false ,"type is not correct");
+        }
+    }
 
     function create(address _owner, string memory _docType, string  memory _docParams) public {
         Document document = new Document(_owner, _docType, _docParams);
@@ -63,5 +87,6 @@ contract DocumentFactory {
     {
         Document document = documents[_index];
 
-        return (document.owner(), document.docType(), document.DocAddr(), address(document).balance, document.docParams());}
+        return (document.owner(), document.docType(), document.DocAddr(), address(document).balance, document.docParams());
+    }
 }

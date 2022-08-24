@@ -15,7 +15,9 @@ contract Qanoon is ERC20, Ownable{
 
     // initial supply of tokens is 1 million and maximum supply is 100 million
     uint256 public _initialSupply = 1_000_000 ether;
-    uint256 public _maxSupply = 100_000_000 ether;
+    uint256 public _maxSupply = 50_000_000 ether;
+
+
 
     // admin mapping
     mapping (address => bool) public _isAdmin;
