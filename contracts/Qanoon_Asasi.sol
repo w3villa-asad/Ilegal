@@ -29,7 +29,7 @@ contract QanoonAsasi is ERC20, Ownable, ReentrancyGuard{
 
     function mint(address _account, uint256 amount) public onlyOwner {
         // should not reach max supply
-        require(totalSupply().add(amount) <= _initialSupply, "ERC20: cap exceeded");
+        require(totalSupply().add(amount) >= _initialSupply, "ERC20: cap exceeded");
     
         _mint(_account, amount);
     }
@@ -60,5 +60,4 @@ contract QanoonAsasi is ERC20, Ownable, ReentrancyGuard{
         transfer(address(this), amount);
     }
 
-    
 }
