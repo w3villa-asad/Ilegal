@@ -30,20 +30,17 @@ contract StakingDoc is Ownable {
         string docType;
     }
 
+    
+
+
     // mapping (address => DocInfo) public docInfo;
 
-    mapping (address => DocInfo) public docInfo;
+    mapping (address => DocInfo[]) public docInfo;
 
     // store documents uploaded by one user using uid
     // mapping (address => mapping(string => DocInfo)) public _documents; // string is docId
 
     mapping (address => string[]) public _documents;
-
-
-    function getUserDocIds(address _account) public view returns(string[] memory) {
-        return _documents[_account];
-    }
-
 
     // to blacklist user for irrelevant Docs
     mapping (address => bool) public _blacklisted;
@@ -57,6 +54,7 @@ contract StakingDoc is Ownable {
         require(!_blacklisted[_staker], "Account is blacklisted");
         stakers.push(_staker);
     }
+
 
     // addBlacklist
     function addBlacklist(address _account) external onlyOwner {
@@ -72,61 +70,63 @@ contract StakingDoc is Ownable {
     function stake(uint256 time, string memory _doctype, string memory uri, address docAddr, string memory docParams, string memory docId) public {
         require(!_blacklisted[msg.sender] == true, "Account is blacklisted");
 
-        docInfo[msg.sender].docAddr = docAddr;
-        docInfo[msg.sender].docParams = docParams;
-        docInfo[msg.sender].docId = docId;
-        docInfo[msg.sender].uri = uri;
+        // docInfo[msg.sender].docAddr = docAddr;
+        // docInfo[msg.sender].docParams = docParams;
+        // docInfo[msg.sender].docId = docId;
+        // docInfo[msg.sender].uri = uri;
+
+        uint256 exp;
+        uint256 time1;
+        // _doctype = "resolutions";
+        string memory doctype;
 
         if(time == 1) {
-            docInfo[msg.sender].timestamp = block.timestamp;
-            docInfo[msg.sender].expiry = block.timestamp + 30 days;
+            time1 = block.timestamp;
+            exp = block.timestamp + 30 days;
         } else if(time == 2) {
-            docInfo[msg.sender].timestamp = block.timestamp;
-            docInfo[msg.sender].expiry = block.timestamp + 60 days;
+            time1 = block.timestamp;
+            exp = block.timestamp + 60 days;
         } else if(time == 3) {
-            docInfo[msg.sender].timestamp = block.timestamp;
-            docInfo[msg.sender].expiry = block.timestamp + 90 days;
+            time1 = block.timestamp;
+            exp = block.timestamp + 90 days;
         } else if(time == 4) {
-            docInfo[msg.sender].timestamp = block.timestamp;
-            docInfo[msg.sender].expiry = block.timestamp + 120 days;
+            time1 = block.timestamp;
+            exp = block.timestamp + 120 days;
         }
 
         addStaker(msg.sender);
 
         if(keccak256(abi.encodePacked(_doctype)) == keccak256(abi.encodePacked("resolutions"))){
-            docInfo[msg.sender].docType = _doctype;
+            doctype = _doctype;
         }
         else if(keccak256(abi.encodePacked(_doctype)) == keccak256(abi.encodePacked("contracts"))){
-            docInfo[msg.sender].docType = _doctype;
+            doctype = _doctype;
         }
         else if(keccak256(abi.encodePacked(_doctype)) == keccak256(abi.encodePacked("certificates"))){
-            docInfo[msg.sender].docType = _doctype;
+            doctype = _doctype;
         }
         else if(keccak256(abi.encodePacked(_doctype)) == keccak256(abi.encodePacked("affidavits"))){
-            docInfo[msg.sender].docType = _doctype;
+            doctype = _doctype;
         }
         else {
             require(false ,"type is not correct");
         }
+
+        DocInfo memory abc = DocInfo({
+        docAddr : docAddr,
+        docParams : docParams,
+        timestamp : time1,
+        expiry : exp,
+        docId : docId,
+        uri : uri,
+        docType : doctype
+        });
+        docInfo[msg.sender].push(abc);
+
     }
 
-    // function to search all documents of a user
-
-    //document will be unstaked by the user    
-    function unstake(address _account) public {
-        require(!_blacklisted[msg.sender] == true, "Account is blacklisted");
-
-        docInfo[_account].docAddr = address(0);
-        docInfo[_account].docParams = "";
-        docInfo[_account].docId = "";
-        docInfo[_account].uri = "";
-        docInfo[_account].timestamp = 0;
-        docInfo[_account].expiry = 0;
-    }
-
-
-    function setType(string memory types ) public {
-      
+    function getUsers(address _account)public view returns(DocInfo[] memory){
+        return docInfo[_account];
     }
 
 }

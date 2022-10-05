@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract QanoonRewards is ERC20, Ownable {
     
     using SafeMath for uint256;
-    uint256 public _initialSupply = 90_000 ether;
+    uint256 public _initialSupply = 1_000_000 ether;
 
 
     constructor() ERC20('QanoonRewards', 'QAN') {
@@ -24,7 +24,6 @@ contract QanoonRewards is ERC20, Ownable {
         
         _burn(msg.sender, amount);
     }
-    
 
 }
 
