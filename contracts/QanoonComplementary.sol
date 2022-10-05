@@ -28,12 +28,13 @@ contract QanoonComplementary is ERC20, Ownable {
         //check if _to is a contract");
         //check if _amount is greater than 0
         require(_amount > 0, "Amount must be greater than 0");
-        // _mint(_to, _amount);
-        transferFrom(address(this), _to, _amount);
+        _mint(_to, _amount);
+        // transferFrom(address(this), _to, _amount);
     }
 
     function burn(uint256 _amount) public onlyOwner {
-        transfer(address(this), _amount);
+        _burn(msg.sender,_amount);
+        currentSupply = currentSupply - _amount;
 
     }
 
