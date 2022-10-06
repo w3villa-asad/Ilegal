@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract QanoonAsasi is ERC20, Ownable, ReentrancyGuard{
     using SafeMath for uint256;
-    address public _admin;
     
     // timestamps mapping
     mapping (address => uint256) public _timestamps;
@@ -21,10 +20,11 @@ contract QanoonAsasi is ERC20, Ownable, ReentrancyGuard{
     
     // admin mapping
     mapping (address => bool) public _isAdmin;
+    uint256 public currentSupply = 0;
 
     constructor() ERC20('QanoonAsasi', 'QAN') {
-        _mint(msg.sender, _initialSupply);
-        _admin = msg.sender;
+        // _mint(msg.sender, _initialSupply);
+        _isAdmin[msg.sender] = true;
     }
 
     function mint(address _account, uint256 amount) public onlyOwner {
@@ -32,6 +32,17 @@ contract QanoonAsasi is ERC20, Ownable, ReentrancyGuard{
         require(totalSupply().add(amount) >= _initialSupply, "ERC20: cap exceeded");
     
         _mint(_account, amount);
+    }
+
+    function buy(address _account, uint256 _amount) public {
+        require(msg.sender != address(0), "Cannot Mint To A Zero Address");
+        currentSupply = currentSupply + _amount ;
+        require(currentSupply <= _initialSupply, "Supply Not Enough To Buy Tokens");
+        _mint(_account, _amount);
+    }
+
+    function increaseSupply(uint256 _amount) public onlyOwner {
+       _initialSupply =  _initialSupply + _amount;
     }
     
 
@@ -51,13 +62,18 @@ contract QanoonAsasi is ERC20, Ownable, ReentrancyGuard{
         _isAdmin[_account] = false;
     }
     
-    function burn(uint amount) public onlyOwner {
-        _burn(msg.sender, amount);
+    function burn(uint256 _amount) public {
+        currentSupply = currentSupply - _amount ;
+        _burn(msg.sender, _amount);
     }
 
-    function burnTokens(uint256 amount) public {
+    // function burnTokens(uint256 amount) public {
         
-        transfer(address(this), amount);
+    //     transfer(address(this), amount);
+    // }
+
+    function totalSupply() public override view returns(uint256){
+        return _initialSupply;
     }
 
 }
