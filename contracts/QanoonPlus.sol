@@ -29,10 +29,11 @@ contract QanoonPlus is ERC20, Ownable {
     
     constructor (address _qanoonAsasi) ERC20("Qanoon Plus","QANP"){
         // _mint(msg.sender, _initialSupply);
+        _isInvestor[msg.sender] == true;
         qanoonAsasi = IQanoonAsasi(_qanoonAsasi);
     }
 
-    function buy(address _account, uint256 _amount) public {
+    function buy(address _account, uint256 _amount) public onlyOwner {
         // require(!address(0)=true, "");
         _mint(_account, _amount);
         _timestamps[_account]=block.timestamp;
@@ -61,14 +62,14 @@ contract QanoonPlus is ERC20, Ownable {
     }
 
     // add investors
-    function addInvestor(address _account)public {
+    function addInvestor(address _account)public onlyOwner {
         require(_isInvestor[_account] == false , "You are Already An Investor");
 
         _isInvestor[_account] = true;
     }
 
     //add investors
-    function removeInvestor(address _account)public {
+    function removeInvestor(address _account)public onlyOwner {
         require(_isInvestor[_account] == true, "You Are Not An Investor Yet");
         _isInvestor[_account] = false;
     }
