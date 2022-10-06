@@ -22,9 +22,13 @@ contract QanoonPlus is ERC20, Ownable {
     uint256 constant DELAY = 182 days; // 182 days = 6 months
 
     mapping(address => uint256) public _timestamps;
+
+    mapping(address => bool) public _isInvestor;
+
+    uint256 currentInvestorSupply = 0;
     
     constructor (address _qanoonAsasi) ERC20("Qanoon Plus","QANP"){
-        _mint(msg.sender, _initialSupply);
+        // _mint(msg.sender, _initialSupply);
         qanoonAsasi = IQanoonAsasi(_qanoonAsasi);
     }
 
@@ -34,6 +38,39 @@ contract QanoonPlus is ERC20, Ownable {
         _timestamps[_account]=block.timestamp;
         _timestamps[_account]=block.timestamp + DELAY; // it will take 6 months after buying token
 
+    }
+
+    function increaseSupply(uint256 _amount) public onlyOwner{
+        _initialSupply += _amount;
+    }
+
+
+    //90,000 qanoon plus coins shall be issued to small investors
+    function issueInvestorSupply(address _account, uint256 _amount) public {
+        require(_isInvestor[_account] == true, "You Are Not An Investor Yet");
+        currentInvestorSupply = currentInvestorSupply + _amount;
+        require(currentInvestorSupply <= _initialSupply, "Supply Is Not Enough For Investment");
+        _mint(_account, _amount);
+    }
+
+    // Value shall double every 24hours or when every purchase is being made
+    function doubleUpSupply(address _account, uint256 _amount) public {
+        require(_isInvestor[_account] == true, "You Are Not An Investor Yet");
+        uint256 amt = _amount + _amount ;
+        _mint(_account, amt);
+    }
+
+    // add investors
+    function addInvestor(address _account)public {
+        require(_isInvestor[_account] == false , "You are Already An Investor");
+
+        _isInvestor[_account] = true;
+    }
+
+    //add investors
+    function removeInvestor(address _account)public {
+        require(_isInvestor[_account] == true, "You Are Not An Investor Yet");
+        _isInvestor[_account] = false;
     }
 
     function buyUsingAsasi(address _owner, uint256 _amount) public onlyOwner {
@@ -53,6 +90,10 @@ contract QanoonPlus is ERC20, Ownable {
             require(false, "Not Enough Tokens to purchase");
         }
 
+    }
+
+    function totalSupply()public override view returns(uint256){
+       return _initialSupply;
     }
 
 }

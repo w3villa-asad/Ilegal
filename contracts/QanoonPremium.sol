@@ -27,7 +27,7 @@ contract QanoonPremium is ERC20, Ownable {
         
     }
     function mint(address _to, uint256 _amount) public payable onlyOwner {
-        require(_to != address(0), "");
+        require(_to != address(0), "Address Cannot Be a ZERO address");
         require(_amount > 0);
         require(msg.value >= _amount);
         require(balanceOf(msg.sender) >= _amount);
