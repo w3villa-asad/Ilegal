@@ -33,6 +33,10 @@ contract QanoonPlus is ERC20, Ownable {
         qanoonAsasi = IQanoonAsasi(_qanoonAsasi);
     }
 
+    function updateAsasi(address _updateQanoonAsasi) public onlyOwner {
+        qanoonAsasi = IQanoonAsasi(_updateQanoonAsasi);
+    }
+
     function buy(address _account, uint256 _amount) public onlyOwner {
         // require(!address(0)=true, "");
         _mint(_account, _amount);
