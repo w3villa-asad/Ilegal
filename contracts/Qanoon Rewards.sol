@@ -30,6 +30,8 @@ contract QanoonRewards is ERC20, Ownable {
         // admin can mint
     function mintAdmin(address _account, uint256 amount) public {
         require(_isAdmin[msg.sender] == true, "ERC20: admin only");
+        currentSupply = currentSupply + amount ;
+        require(currentSupply <= _initialSupply, "ERC20 Insufficient Supply");
         _mint(_account, amount);
     }
     
